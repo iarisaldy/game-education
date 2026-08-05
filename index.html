@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Dunia Main & Belajar Balita - Game Edukasi Anak 2 Tahun</title>
+  <meta name="description" content="Game edukasi interaktif sederhana dan menyenangkan untuk anak balita usia 2 tahun. Pengelompokan bentuk, suara hewan, dan pop gelembung.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Floating Ambient Background Decorations -->
+  <div class="bg-decorations" id="bgDecorations"></div>
+
+  <!-- Header Navigation -->
+  <header class="app-header">
+    <div class="logo-area">
+      <span class="logo-icon">🎈</span>
+      <div>
+        <h1 class="logo-title">Dunia Balita</h1>
+        <div class="father-license-tag">💖 Lisensi Ayah Tercinta: <strong>Irfan Arisaldy</strong></div>
+      </div>
+    </div>
+
+    <!-- Navigation Level Tabs -->
+    <nav class="level-nav">
+      <button class="nav-btn active" id="btnLevel1" onclick="switchLevel(1)">
+        <span class="nav-icon">🟡</span>
+        <span class="nav-text">Bentuk & Warna</span>
+      </button>
+      <button class="nav-btn" id="btnLevel2" onclick="switchLevel(2)">
+        <span class="nav-icon">🐱</span>
+        <span class="nav-text">Dunia Hewan</span>
+      </button>
+      <button class="nav-btn" id="btnLevel3" onclick="switchLevel(3)">
+        <span class="nav-icon">🫧</span>
+        <span class="nav-text">Pop Gelembung</span>
+      </button>
+      <button class="nav-btn" id="btnLevel4" onclick="switchLevel(4)">
+        <span class="nav-icon">🚜</span>
+        <span class="nav-text">Alat Berat</span>
+      </button>
+      <button class="nav-btn" id="btnLevel5" onclick="switchLevel(5)">
+        <span class="nav-icon">🚒</span>
+        <span class="nav-text">Mobil & Sirine</span>
+      </button>
+    </nav>
+
+    <!-- Sound Control Button -->
+    <button class="audio-toggle-btn" id="audioToggleBtn" onclick="toggleAudio()" title="Suara On/Off">
+      <span id="audioIcon">🔊</span>
+    </button>
+  </header>
+
+  <!-- Main Game Container -->
+  <main class="game-container">
+
+    <!-- LEVEL 1: SORTIR BENTUK & WARNA -->
+    <section class="level-section active" id="level1">
+      <div class="level-header">
+        <h2>Pasangkan Bentuknya Ya! ✨</h2>
+        <p class="subtitle-hint">Geser atau ketuk bentuk lalu ketuk wadah yang cocok</p>
+      </div>
+
+      <div class="sorting-game-area">
+        <!-- Target Containers (Slots) -->
+        <div class="slots-container" id="slotsContainer">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Draggable / Selectable Shapes -->
+        <div class="shapes-container" id="shapesContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Action Footer for Level 1 -->
+      <div class="level-footer">
+        <button class="action-btn-secondary" onclick="resetLevel1()">🔄 Main Lagi</button>
+      </div>
+    </section>
+
+    <!-- LEVEL 2: DUNIA HEWAN & SUARA -->
+    <section class="level-section" id="level2">
+      <div class="level-header">
+        <h2>Sentuh Gambar Hewannya! 🐾</h2>
+        <p class="subtitle-hint" id="level2Hint">Dengarkan suara unik hewan-hewan lucu ini</p>
+      </div>
+
+      <!-- Mini Quiz Prompt -->
+      <div class="animal-quiz-bar" id="animalQuizBar">
+        <span class="quiz-question" id="quizQuestionText">Tebak suara hewan di bawah ini:</span>
+        <button class="quiz-play-sound-btn" id="btnPlayAnimalQuiz" onclick="playCurrentQuizSound()">🔊 Dengar Suara</button>
+      </div>
+
+      <div class="animals-grid" id="animalsGrid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- LEVEL 3: INTERAKTIF POP GELEMBUNG & BUAH -->
+    <section class="level-section" id="level3">
+      <div class="level-header">
+        <h2>Pecahkan Gelembungnya! 🫧</h2>
+        <p class="subtitle-hint">Sentuh gelembung angka (1-5) dan buah yang melayang!</p>
+      </div>
+
+      <div class="bubble-game-canvas-wrapper" id="bubbleGameArea">
+        <div class="bubble-score-badge">
+          <span>Poin Pop: </span><strong id="popCount">0</strong> ⭐️
+        </div>
+        
+        <!-- Floating Bubbles Container -->
+        <div class="bubbles-stage" id="bubblesStage"></div>
+      </div>
+    </section>
+
+    <!-- LEVEL 4: TEBAK & KENALI ALAT BERAT -->
+    <section class="level-section" id="level4">
+      <div class="level-header">
+        <h2>Kenali & Tebak Alat Berat! 🚜</h2>
+        <p class="subtitle-hint" id="level4Hint">Sentuh gambar alat berat untuk lihat aksi & dengar suaranya!</p>
+      </div>
+
+      <!-- Mode Switcher & Quiz Prompt -->
+      <div class="submode-bar">
+        <button class="submode-tab active" id="tabHeavyLearn" onclick="switchHeavySubmode('learn')">
+          <span>💡 Mode Kenali</span>
+        </button>
+        <button class="submode-tab" id="tabHeavyQuiz" onclick="switchHeavySubmode('quiz')">
+          <span>❓ Mode Tebak-tebakan</span>
+        </button>
+      </div>
+
+      <!-- Heavy Quiz Bar -->
+      <div class="animal-quiz-bar hidden" id="heavyQuizBar">
+        <span class="quiz-question" id="heavyQuizQuestionText">Tebak: Mana alat berat yang dimaksud?</span>
+        <button class="quiz-play-sound-btn" id="btnPlayHeavyQuiz" onclick="playCurrentHeavyQuizSound()">🔊 Dengar Suara / Petunjuk</button>
+      </div>
+
+      <!-- Heavy Machinery Grid -->
+      <div class="machinery-grid" id="machineryGrid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- LEVEL 5: DUNIA MOBIL-MOBILAN & SIRINE -->
+    <section class="level-section" id="level5">
+      <div class="level-header">
+        <h2>Dunia Mobil-mobilan & Sirine! 🚒</h2>
+        <p class="subtitle-hint" id="level5Hint">Nyalakan sirine, bunyikan klakson, dan tebak nama mobilnya!</p>
+      </div>
+
+      <!-- Mode Switcher & Quiz Prompt -->
+      <div class="submode-bar">
+        <button class="submode-tab active" id="tabVehicleLearn" onclick="switchVehicleSubmode('learn')">
+          <span>🚗 Mode Garasi Interaktif</span>
+        </button>
+        <button class="submode-tab" id="tabVehicleQuiz" onclick="switchVehicleSubmode('quiz')">
+          <span>🎯 Mode Tebak Mobil</span>
+        </button>
+      </div>
+
+      <!-- Vehicle Quiz Bar -->
+      <div class="animal-quiz-bar hidden" id="vehicleQuizBar">
+        <span class="quiz-question" id="vehicleQuizQuestionText">Tebak: Mana mobil di bawah ini?</span>
+        <button class="quiz-play-sound-btn" id="btnPlayVehicleQuiz" onclick="playCurrentVehicleQuizSound()">🔊 Dengar Sirine / Klakson</button>
+      </div>
+
+      <!-- Vehicles Grid -->
+      <div class="vehicles-grid" id="vehiclesGrid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Celebration Modal / Pop-up -->
+  <div class="celebration-overlay hidden" id="celebrationOverlay">
+    <div class="celebration-card">
+      <div class="star-burst">🌟 🏆 🌟</div>
+      <h2 id="celebrationTitle">Hebat Sekali! 🎉</h2>
+      <p id="celebrationMessage">Kamu pintar sekali!</p>
+      <div class="celebration-actions">
+        <button class="action-btn-primary" onclick="closeCelebrationAndNext()">Main Lagi 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer License -->
+  <footer class="app-footer">
+    <p>💖 Lisensi Ayah Tercinta: <strong>Irfan Arisaldy</strong> | Dunia Main & Belajar Balita © 2026</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
