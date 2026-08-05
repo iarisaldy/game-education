@@ -427,10 +427,10 @@ body {
 
 .animals-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(6, 1fr);
   gap: 20px;
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   margin-top: 10px;
 }
 
@@ -963,7 +963,12 @@ body {
     height: 65px;
   }
 
-  .animals-grid, .machinery-grid, .vehicles-grid {
+  .animals-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .machinery-grid, .vehicles-grid {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 14px;
   }

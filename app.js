@@ -425,6 +425,87 @@ function playSynthesizedAudioEffect(type) {
     osc.start(now);
     osc.stop(now + 0.45);
 
+  } else if (type === 'horse') {
+    // Horse neigh (Rising pitch with vibrato)
+    const osc = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(250, now);
+    osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
+    osc.frequency.linearRampToValueAtTime(450, now + 0.5);
+    osc.frequency.linearRampToValueAtTime(200, now + 0.7);
+
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(8, now);
+    const modGain = ctx.createGain();
+    modGain.gain.setValueAtTime(30, now);
+    osc2.connect(modGain);
+    modGain.connect(osc.frequency);
+
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.linearRampToValueAtTime(0.7, now + 0.15);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc2.start(now);
+    osc.stop(now + 0.7);
+    osc2.stop(now + 0.7);
+
+  } else if (type === 'rabbit') {
+    // Rabbit squeak (Soft high-pitched squeak)
+    [0, 0.15].forEach(delay => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1200, now + delay);
+      osc.frequency.exponentialRampToValueAtTime(1800, now + delay + 0.06);
+      osc.frequency.exponentialRampToValueAtTime(1100, now + delay + 0.12);
+
+      gain.gain.setValueAtTime(0.4, now + delay);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.12);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now + delay);
+      osc.stop(now + delay + 0.12);
+    });
+
+  } else if (type === 'tiger') {
+    // Tiger growl (Deep growl with rumble, deeper than lion)
+    const osc = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(80, now);
+    osc.frequency.linearRampToValueAtTime(120, now + 0.2);
+    osc.frequency.linearRampToValueAtTime(55, now + 0.8);
+
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(85, now);
+    osc2.frequency.linearRampToValueAtTime(125, now + 0.2);
+    osc2.frequency.linearRampToValueAtTime(60, now + 0.8);
+
+    gain.gain.setValueAtTime(0.3, now);
+    gain.gain.linearRampToValueAtTime(0.85, now + 0.15);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+
+    osc.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc2.start(now);
+    osc.stop(now + 0.8);
+    osc2.stop(now + 0.8);
+
   } else if (type === 'siren') {
     // Emergency Siren Wail (Police / Fire Truck)
     const osc = ctx.createOscillator();
@@ -811,7 +892,7 @@ const ANIMALS_DATA = [
     soundText: 'Kwek! Kwek!',
     audioType: 'duck',
     speech: 'Kwek Kwek! Ini Bebek!',
-    imgSrc: 'images/duck_real.jpg'
+    imgSrc: 'images/duck_real.png'
   },
   {
     id: 'gajah',
@@ -842,6 +923,7 @@ const ANIMALS_DATA = [
     name: 'Kambing',
     soundText: 'Mbekk! Mbekk!',
     audioType: 'goat',
+    speech: 'Mbekk Mbekk! Ini Kambing!',
     imgSrc: 'images/goat_real.jpg'
   },
   {
@@ -849,6 +931,7 @@ const ANIMALS_DATA = [
     name: 'Kuda',
     soundText: 'Hiii-hiii!',
     audioType: 'horse',
+    speech: 'Hiii-hiii! Ini Kuda!',
     imgSrc: 'images/horse_real.jpg'
   },
   {
@@ -856,13 +939,15 @@ const ANIMALS_DATA = [
     name: 'Kelinci',
     soundText: 'Ciap! Ciap!',
     audioType: 'rabbit',
+    speech: 'Ciap Ciap! Ini Kelinci!',
     imgSrc: 'images/rabbit_real.jpg'
   },
   {
     id: 'harimau',
     name: 'Harimau',
-    soundText: 'Roar! Roar!',
+    soundText: 'Aum! Aum!',
     audioType: 'tiger',
+    speech: 'Aum Aum! Ini Harimau!',
     imgSrc: 'images/tiger_real.jpg'
   }
 ];
@@ -896,6 +981,13 @@ function initLevel2() {
       // Play real audio sound effect directly
       playAudioEffect(animal.audioType);
 
+      // Speak the animal name after the sound
+      if (animal.speech) {
+        speakIndonesian(animal.speech, 600);
+      } else {
+        speakIndonesian(`Ini ${animal.name}!`, 600);
+      }
+
       // Check quiz mode if active
       if (quizTargetAnimal && quizTargetAnimal.id === animal.id) {
         setTimeout(() => {
@@ -904,7 +996,7 @@ function initLevel2() {
             `Kamu pintar sekali menebak suara ${animal.name}!`,
             () => startNewAnimalQuiz()
           );
-        }, 600);
+        }, 800);
       }
     });
 
@@ -1108,7 +1200,7 @@ const HEAVY_MACHINERY_DATA = [
     id: 'excavator',
     name: 'Eksavator (Beko)',
     badge: 'Mengeruk Tanah! 🚜',
-    audioType: 'hydraulic',
+    audioType: 'excavator',
     speech: 'Eksavator! Mengeruk tanah dengan pengeruk besar!',
     hint: 'Alat berat yang punya pengeruk besar untuk keruk tanah',
     imgSrc: 'images/excavator_real_1785861487007.png'
@@ -1117,7 +1209,7 @@ const HEAVY_MACHINERY_DATA = [
     id: 'bulldozer',
     name: 'Buldoser',
     badge: 'Mendorong Batu! 🪨',
-    audioType: 'engine',
+    audioType: 'bulldozer',
     speech: 'Buldoser! Mendorong tanah dan batu-batu keras!',
     hint: 'Alat berat yang dorong batu keras pakai sekop depan',
     imgSrc: 'images/bulldozer_real_1785861502278.png'
@@ -1126,7 +1218,7 @@ const HEAVY_MACHINERY_DATA = [
     id: 'dump_truck',
     name: 'Truk Jungkit',
     badge: 'Mengangkut Pasir! ⏳',
-    audioType: 'horn',
+    audioType: 'dumptruck',
     speech: 'Truk Jungkit! Mengangkut pasir dan merobohkan muatan!',
     hint: 'Truk besar yang bisa angkut dan tuang pasir',
     imgSrc: 'images/dumptruck_real_1785861520356.png'
@@ -1135,7 +1227,7 @@ const HEAVY_MACHINERY_DATA = [
     id: 'mixer_truck',
     name: 'Truk Molen',
     badge: 'Memutar Semen! 🔄',
-    audioType: 'engine',
+    audioType: 'mixertruck',
     speech: 'Truk Molen! Memutar adonan semen agar tetap basah!',
     hint: 'Truk dengan tabung memutar adonan semen',
     imgSrc: 'images/mixertruck_real_1785861540039.png'
@@ -1144,7 +1236,7 @@ const HEAVY_MACHINERY_DATA = [
     id: 'crane',
     name: 'Mobil Crane',
     badge: 'Mengangkat Beban! 🏗️',
-    audioType: 'hydraulic',
+    audioType: 'crane',
     speech: 'Mobil Crane! Mengangkat barang-barang berat ke tempat tinggi!',
     hint: 'Mobil yang punya tiang tinggi untuk angkat barang',
     imgSrc: 'images/crane_real_1785861555903.png'
@@ -1153,7 +1245,7 @@ const HEAVY_MACHINERY_DATA = [
     id: 'road_roller',
     name: 'Stoom Penggilas',
     badge: 'Meratakan Jalan! 🛣️',
-    audioType: 'engine',
+    audioType: 'roadroller',
     speech: 'Stoom Penggilas! Meratakan jalan raya supaya mulus!',
     hint: 'Mesin dengan roda besi besar penggiles jalan',
     imgSrc: 'images/roadroller_real_1785861573500.png'
@@ -1162,7 +1254,7 @@ const HEAVY_MACHINERY_DATA = [
     id: 'loader',
     name: 'Front Loader',
     badge: 'Mengambil Tanah! ⛏️',
-    audioType: 'hydraulic',
+    audioType: 'loader',
     speech: 'Front Loader! Mengambil tanah lalu memuat ke dalam truk!',
     hint: 'Tractor yang punya sekop angkat di depan',
     imgSrc: 'images/loader_real_1785861627907.png'
@@ -1171,10 +1263,10 @@ const HEAVY_MACHINERY_DATA = [
     id: 'tractor',
     name: 'Truk Traktor',
     badge: 'Membajak Sawah! 🌾',
-    audioType: 'engine',
+    audioType: 'tractor',
     speech: 'Truk Traktor! Membajak tanah dan tanah pertanian!',
     hint: 'Mesin traktor untuk bajak tanah dan sawah',
-    imgSrc: 'images/tractor_real.jpg'
+    imgSrc: 'images/tractor_real.png'
   }
 ];
 
@@ -1246,17 +1338,23 @@ function renderHeavyGrid() {
       // Play real audio sound effect directly
       playAudioEffect(item.audioType);
 
-      if (heavySubmode === 'quiz') {
+      if (heavySubmode === 'learn') {
+        // Speak the name and description in learn mode
+        speakIndonesian(item.speech, 600);
+      } else if (heavySubmode === 'quiz') {
         if (quizTargetHeavy && quizTargetHeavy.id === item.id) {
+          const praise = getRandomPraise();
+          speakIndonesian(`${praise} Benar, ini ${item.name}!`, 600);
           setTimeout(() => {
             showCelebrationModal(
               "Hebat Sekali! 🎉",
               `Kamu pintar sekali menebak ${item.name}!`,
               () => startNewHeavyQuiz()
             );
-          }, 600);
+          }, 800);
         } else {
           playAudioEffect('soft_error');
+          speakIndonesian("Coba tebak lagi ya!", 400);
         }
       }
     });
@@ -1349,7 +1447,7 @@ const VEHICLES_DATA = [
     badge: 'Derek Kendaraan! 🚜',
     audioType: 'towtruck',
     speech: 'Mobil Derek! Siap menderek mobil yang mogok!',
-    imgSrc: 'images/towtruck_real.jpg'
+    imgSrc: 'images/towtruck_real.png'
   }
 ];
 
